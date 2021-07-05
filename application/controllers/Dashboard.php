@@ -89,7 +89,8 @@ class Dashboard extends CI_Controller {
 		$this->load->library('qra');
 
 		//echo date('Y-m-d')
-		$raw = strtotime('Monday last week');
+		//$raw = strtotime('Monday last week');
+		$raw = strtotime('-1 year');
 		
 		$mon = date('Y-m-d', $raw);
 		$sun = date('Y-m-d', strtotime('Monday next week'));
