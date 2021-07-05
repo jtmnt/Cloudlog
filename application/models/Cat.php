@@ -41,7 +41,7 @@
 						$data = array(
 						'frequency' => $result['frequency'],
 						'mode' => $result['mode'],
-						'timestamp' => date("Y-m-d H:i:s", strtotime($result['timestamp'])),
+						'timestamp' => $result['timestamp'],
 						);
 
 						$this->db->where('id', $radio_id);
@@ -67,7 +67,7 @@
 						'radio' => $result['radio'],
 						'frequency' => $result['frequency'],
 						'mode' => $result['mode'],
-						'timestamp' => date("Y-m-d H:i:s", strtotime($result['timestamp'])),
+						'timestamp' => $result['timestamp'],
 					);
 				}
 
