@@ -18,11 +18,16 @@ class Qra {
 	// Task: convert qra to lat/long
 	function qra2latlong($strQRA)
 	{
+		if (strlen($strQRA) > 6) $strQRA = substr($strQRA,0,6);
+	
 		return qra2latlong($strQRA);
 	}
 	
 	// calculate  the bearing between two squares
 	function bearing($tx, $rx, $unit = 'M') {
+		if (strlen($tx) > 6) $tx = substr($tx,0,6);
+		if (strlen($rx) > 6) $rx = substr($rx,0,6);
+
 		if(strlen($tx) <= 6 && strlen($rx) <= 6) {
 			$my = qra2latlong($tx);
 			$stn = qra2latlong($rx);
@@ -40,6 +45,9 @@ class Qra {
 	*
 	*/
 	function distance($tx, $rx, $unit = 'M') {
+		if (strlen($tx) > 6) $tx = substr($tx,0,6);
+		if (strlen($rx) > 6) $rx = substr($rx,0,6);
+
 		// Calc LatLongs
 		$my = qra2latlong($tx);
 		$stn = qra2latlong($rx);
