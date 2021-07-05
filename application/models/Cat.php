@@ -41,7 +41,6 @@
 						$data = array(
 						'frequency' => $result['frequency'],
 						'mode' => $result['mode'],
-						'timestamp' => 'NOW()',
 						);
 
 						$this->db->where('id', $radio_id);
@@ -66,8 +65,7 @@
 					$data = array(
 						'radio' => $result['radio'],
 						'frequency' => $result['frequency'],
-						'mode' => $result['mode'],
-						'timestamp' => 'NOW()',
+						'mode' => $result['mode']
 					);
 				}
 
