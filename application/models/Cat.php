@@ -9,7 +9,9 @@
 		}
 
 		function update($result) {
-		
+
+			helper('date');
+
 			$this->db->where('radio', $result['radio']); 
 			$query = $this->db->get('cat');
 			
@@ -41,7 +43,7 @@
 						$data = array(
 						'frequency' => $result['frequency'],
 						'mode' => $result['mode'],
-						'timestamp' => date("Y-m-d H:i:s"),
+						'timestamp' => date("Y-m-d H:i:s", now()),
 						);
 
 						$this->db->where('id', $radio_id);
@@ -67,7 +69,7 @@
 						'radio' => $result['radio'],
 						'frequency' => $result['frequency'],
 						'mode' => $result['mode'],
-						'timestamp' => date("Y-m-d H:i:s"),
+						'timestamp' => date("Y-m-d H:i:s", now()),
 					);
 				}
 
