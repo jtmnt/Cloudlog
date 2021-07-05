@@ -10,7 +10,7 @@
 
 		function update($result) {
 
-			helper('date');
+			$this->CI->load->helper('date');
 
 			$this->db->where('radio', $result['radio']); 
 			$query = $this->db->get('cat');
