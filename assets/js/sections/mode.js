@@ -6,6 +6,9 @@ $('.modetable').DataTable({
 	"scrollCollapse": true,
 	"paging": false,
 	"scrollX": true,	
+	"language": {
+		url: getDataTablesLanguageUrl(),
+	},
 	initComplete: function () {
 		this.api()
 			.columns('.select-filter')
@@ -43,7 +46,7 @@ function createModeDialog() {
 				nl2br: false,
 				message: html,
 				buttons: [{
-					label: 'Close',
+					label: lang_admin_close,
 					action: function (dialogItself) {
 						dialogItself.close();
 					}

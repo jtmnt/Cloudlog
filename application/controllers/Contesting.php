@@ -50,6 +50,15 @@ class Contesting extends CI_Controller {
 		echo json_encode($this->Contesting_model->getSessionQsos($qso));
     }
 
+	public function getSessionFreshQsos() {
+        $this->load->model('Contesting_model');
+
+        $contest_id = $this->input->post('contest_id');
+
+		header('Content-Type: application/json');
+		echo json_encode($this->Contesting_model->getSessionFreshQsos($contest_id));
+    }
+
 	public function getSession() {
         $this->load->model('Contesting_model');
 
@@ -80,7 +89,7 @@ class Contesting extends CI_Controller {
 		$this->load->library('form_validation');
 
 		$this->form_validation->set_rules('name', 'Contest Name', 'required');
-		$this->form_validation->set_rules('adifname', 'Contest Adif Name', 'required');
+		$this->form_validation->set_rules('adifname', 'Adif Contest Name', 'required');
 
 		if ($this->form_validation->run() == FALSE)
 		{
@@ -106,15 +115,14 @@ class Contesting extends CI_Controller {
 	}
 
 	public function edit($id) {
-		$this->load->library('form_validation');
-
 		$this->load->model('Contesting_model');
+		$this->load->library('form_validation');
 
 		$item_id_clean = $this->security->xss_clean($id);
 
 		$data['contest'] = $this->Contesting_model->contest($item_id_clean);
 
-		$data['page_title'] = "Edit Contest";
+		$data['page_title'] = lang('admin_contest_edit_update_contest');
 
 		$this->form_validation->set_rules('name', 'Contest Name', 'required');
 		$this->form_validation->set_rules('adifname', 'Adif Contest Name', 'required');
@@ -189,8 +197,13 @@ class Contesting extends CI_Controller {
 		$result = $this->Contesting_model->checkIfWorkedBefore($call, $band, $mode, $contest);
 		
 		header('Content-Type: application/json');
-		if ($result->num_rows()) {
-			echo json_encode(array('message' => 'Worked before'));
+		if ($result && $result->num_rows()) {
+			$timeb4=substr($result->row()->b4,0,5);
+        		$custom_date_format = $this->session->userdata('user_date_format');
+			$abstimeb4=date($custom_date_format, strtotime($result->row()->COL_TIME_OFF)).' '.date('H:i',strtotime($result->row()->COL_TIME_OFF));
+			echo json_encode(array('message' => 'Worked at '.$abstimeb4.' ('.$timeb4.' ago) before'));
+		} else {
+			echo json_encode(array('message' => 'OKAY'));
 		}
 		return;
 	}

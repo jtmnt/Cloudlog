@@ -22,6 +22,7 @@ $lang['lotw_status'] = 'Durum';
 $lang['lotw_options'] = 'Seçenekler';
 $lang['lotw_valid'] = 'Geçerli';
 $lang['lotw_expired'] = 'Süresi doldu';
+$lang['lotw_expiring'] = 'Expiring';
 $lang['lotw_not_synced'] = 'Senkronize Edilmedi';
 
 $lang['lotw_certificate_dxcc'] = 'DXCC Sertifikası';
@@ -33,6 +34,7 @@ $lang['lotw_upload_exported_adif_file_from_lotw'] = 'LoTW\'den Dışa Aktarılan
 $lang['lotw_upload_type_must_be_adi'] = 'Günlük dosyaları .adi dosya tipine sahip olmalıdır';
 
 $lang['lotw_pull_lotw_data_for_me'] = 'Benim için LoTW verilerini çek';
+$lang['lotw_select_callsign'] = 'LoTW onaylarının alınacağı çağrı kodunu seçin';
 
 $lang['lotw_report_download_overview_helptext'] ='Cloudlog, sizin için LoTW\'den bir rapor indirmek için kullanıcı profilinizde kayıtlı LoTW kullanıcı adını ve şifreyi kullanacak. Cloudlog indirmeleri raporu, seçilen tarihten itibaren veya son LoTW onayınızdan (günlüğünüzden alınır) bu yana şimdiye kadarki tüm onaylara sahip olacaktır.';
 
@@ -51,3 +53,11 @@ $lang['lotw_p12_export_step_three'] = '"Çağrı İmzası Sertifika Dosyasını 
 $lang['lotw_p12_export_step_four'] = 'Aşağıdaki Dosyayı Yükleyin.';
 
 $lang['lotw_confirmed'] = 'Bu QSO LoTW\'de onaylandı';
+
+// LoTW'nin Sona Ermesi
+$lang['lotw_cert_expiring'] = 'LoTW sertifikalarınızdan en az birinin süresi dolmak üzere!';
+$lang['lotw_cert_expired'] = 'LoTW sertifikalarınızdan en az birinin süresi doldu!';
+
+// Çok Kullanıcı
+$lang['lotw_user'] = 'Bu istasyon LoTW kullanıyor.';
+$lang['lotw_last_upload'] = 'Son yükleme';

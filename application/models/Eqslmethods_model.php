@@ -48,6 +48,7 @@ class Eqslmethods_model extends CI_Model {
             foreach ($stations->result() as $row) {
                 array_push($logbooks_locations_array, $row->station_id);
             }
+	    array_push($logbooks_locations_array, -9999);
         }
 
         $this->db->select('station_profile.*, '.$this->config->item('table_name').'.COL_PRIMARY_KEY, '.$this->config->item('table_name').'.COL_TIME_ON, '.$this->config->item('table_name').'.COL_CALL, '.$this->config->item('table_name').'.COL_MODE, '.$this->config->item('table_name').'.COL_SUBMODE, '.$this->config->item('table_name').'.COL_BAND, '.$this->config->item('table_name').'.COL_COMMENT, '.$this->config->item('table_name').'.COL_RST_SENT, '.$this->config->item('table_name').'.COL_PROP_MODE, '.$this->config->item('table_name').'.COL_SAT_NAME, '.$this->config->item('table_name').'.COL_SAT_MODE, '.$this->config->item('table_name').'.COL_QSLMSG');
@@ -79,6 +80,7 @@ class Eqslmethods_model extends CI_Model {
             foreach ($stations->result() as $row) {
                 array_push($logbooks_locations_array, $row->station_id);
             }
+	array_push($logbooks_locations_array, -9999);
         }
 
         $this->db->select('station_profile.station_id, '.$this->config->item('table_name').'.COL_PRIMARY_KEY, '.$this->config->item('table_name').'.COL_TIME_ON, '.$this->config->item('table_name').'.COL_CALL, '.$this->config->item('table_name').'.COL_MODE, '.$this->config->item('table_name').'.COL_SUBMODE, '.$this->config->item('table_name').'.COL_BAND, '.$this->config->item('table_name').'.COL_PROP_MODE, '.$this->config->item('table_name').'.COL_SAT_NAME, '.$this->config->item('table_name').'.COL_SAT_MODE, '.$this->config->item('table_name').'.COL_QSLMSG, eQSL_images.qso_id');
@@ -120,7 +122,7 @@ class Eqslmethods_model extends CI_Model {
 		$this->db->where('eqslqthnickname IS NOT NULL');
 		$this->db->where('eqslqthnickname !=', '');
 		$this->db->from('station_profile');
-		$this->db->select('station_callsign, eqslqthnickname');
+		$this->db->select('station_callsign, eqslqthnickname, station_id');
 		$this->db->distinct(TRUE);
 
 		return $this->db->get();
@@ -149,14 +151,15 @@ class Eqslmethods_model extends CI_Model {
         } else {
             // No previous date (first time import has run?), so choose UNIX EPOCH!
             // Note: date is yyyy/mm/dd format
-            return '1970/01/01';
+            return '19700101';
         }
     }
 
     // Update a QSO with eQSL QSL info
-    // We could also probably use this use this: https://eqsl.cc/qslcard/VerifyQSO.txt
+    // We could also probably use this:
+    // https://eqsl.cc/qslcard/VerifyQSO.txt
     // https://www.eqsl.cc/qslcard/ImportADIF.txt
-    function eqsl_update($datetime, $callsign, $band, $mode, $qsl_status,$station_callsign) {
+    function eqsl_update($datetime, $callsign, $band, $mode, $qsl_status, $station_callsign, $station_id) {
         $data = array(
             'COL_EQSL_QSLRDATE' => date('Y-m-d H:i:s'), // eQSL doesn't give us a date, so let's use current
             'COL_EQSL_QSL_RCVD' => $qsl_status
@@ -168,6 +171,7 @@ class Eqslmethods_model extends CI_Model {
 	$this->db->where('COL_STATION_CALLSIGN', $station_callsign);
         $this->db->where('COL_BAND', $band);
         $this->db->where('COL_MODE', $mode);
+        $this->db->where('station_id', $station_id);
 
         $this->db->update($this->config->item('table_name'), $data);
 
@@ -175,7 +179,7 @@ class Eqslmethods_model extends CI_Model {
     }
 
     // Determine if we've already received an eQSL for this QSO
-    function eqsl_dupe_check($datetime, $callsign, $band, $mode, $qsl_status,$station_callsign) {
+    function eqsl_dupe_check($datetime, $callsign, $band, $mode, $qsl_status, $station_callsign, $station_id) {
         $this->db->select('COL_EQSL_QSLRDATE');
         $this->db->where('COL_TIME_ON >= DATE_ADD(DATE_FORMAT("'.$datetime.'", \'%Y-%m-%d %H:%i\' ), INTERVAL -15 MINUTE )');
         $this->db->where('COL_TIME_ON <= DATE_ADD(DATE_FORMAT("'.$datetime.'", \'%Y-%m-%d %H:%i\' ), INTERVAL 15 MINUTE )');
@@ -184,6 +188,7 @@ class Eqslmethods_model extends CI_Model {
         $this->db->where('COL_MODE', $mode);
 	$this->db->where('COL_STATION_CALLSIGN', $station_callsign);
         $this->db->where('COL_EQSL_QSL_RCVD', $qsl_status);
+        $this->db->where('station_id', $station_id);
         $this->db->limit(1);
     
         $query = $this->db->get($this->config->item('table_name'));

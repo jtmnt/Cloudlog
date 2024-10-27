@@ -1,6 +1,6 @@
 <?php
 	header('Content-Type: text/plain; charset=utf-8');
-	header('Content-Disposition: attachment; filename="'.$this->session->userdata('user_callsign').'-SOTA-'.date('dmY-Hi').'.csv"');
+	header('Content-Disposition: attachment; filename="'.$this->session->userdata('user_callsign').'-SOTA-'.date('Ymd-Hi').'.csv"');
 $CI =& get_instance();
 $bands = array(
    "2190m"  => "VLF",
@@ -35,6 +35,16 @@ $bands = array(
 );
 foreach ($qsos as $qso) {
    $timestamp = strtotime($qso['COL_TIME_ON']);
-   print "V2,".$qso['station_callsign'].",".$qso['COL_MY_SOTA_REF'].",".date('d/m/y', $timestamp).",".date('Hi', $timestamp).",".$bands[$qso['COL_BAND']].",".$qso['COL_MODE'].",".$qso['COL_CALL'].",".$qso['COL_SOTA_REF'].",".$qso['COL_COMMENT']."\n";
+   printf("V2,%s,%s,%s,%s,%s,%s,%s,%s,\"%s\"\n",
+      $qso['station_callsign'],
+      $qso['COL_MY_SOTA_REF'],
+      date('d/m/y', $timestamp),
+      date('Hi', $timestamp),
+      $bands[$qso['COL_BAND']],
+      $qso['COL_MODE'],
+      $qso['COL_CALL'],
+      $qso['COL_SOTA_REF'],
+      $qso['COL_COMMENT']
+   );
 }
 ?>

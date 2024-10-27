@@ -127,6 +127,29 @@ class API extends CI_Controller {
 		}
 	}
 
+	function check_auth($key) {
+		$this->load->model('api_model');
+			header("Content-type: text/xml");
+		if($this->api_model->access($key) == "No Key Found" || $this->api_model->access($key) == "Key Disabled") {
+			// set the content type as json
+			header("Content-type: application/json");
+
+			// set the http response code to 401
+			http_response_code(401);
+
+			// return the json with the status as failed
+			echo json_encode(['status' => 'failed', 'reason' => "missing or invalid api key"]);
+		} else {
+			// set the content type as json
+			header("Content-type: application/json");
+
+			// set the http response code to 200
+			http_response_code(200);
+			// return the json
+			echo json_encode(['status' => 'valid', 'rights' => $this->api_model->access($key)]);
+		}
+	}
+
 	function station_info($key) {
 		$this->load->model('api_model');
 		$this->load->model('stations');
@@ -164,11 +187,19 @@ class API extends CI_Controller {
 
 		$this->load->model('stations');
 
+		$return_msg = array();
+		$return_count = 0;
+
 		// Decode JSON and store
 		$obj = json_decode(file_get_contents("php://input"), true);
 		if ($obj === NULL) {
-		    echo json_encode(['status' => 'failed', 'reason' => "wrong JSON"]);
-		    die();
+			// Decoding not valid try simple www-x-form-urlencoded
+		    $objTmp = file_get_contents("php://input");
+		    parse_str($objTmp, $obj);
+		    if ($obj === NULL) {
+		        echo json_encode(['status' => 'failed', 'reason' => "wrong JSON"]);
+		        die();
+		    }
 		}
 
 		if(!isset($obj['key']) || $this->api_model->authorize($obj['key']) == 0) {
@@ -211,14 +242,26 @@ class API extends CI_Controller {
 						die();
 					}
 
+					if(!(isset($record['call'])) || (trim($record['call']) == '')) {
+						http_response_code(401);
+						echo json_encode(['status' => 'failed', 'reason' => "QSO Call is empty."]);
+						die();
+					}
+
 					$this->api_model->update_last_used($obj['key']);
 
-					$this->logbook_model->import($record, $obj['station_profile_id'], NULL, NULL, NULL, NULL, NULL, NULL, false, false, true);
+					$msg = $this->logbook_model->import($record, $obj['station_profile_id'], NULL, NULL, NULL, NULL, NULL, NULL, false, false, true);
+
+					if ( $msg == "" ) {
+						$return_count++;
+					} else {
+						$return_msg[] = $msg;
+					}
 				}
 
 			};
 			http_response_code(201);
-			echo json_encode(['status' => 'created', 'type' => $obj['type'], 'string' => $obj['string']]);
+			echo json_encode(['status' => 'created', 'type' => $obj['type'], 'string' => $obj['string'], 'imported_count' => $return_count, 'messages' => $return_msg ]);
 
 		}
 

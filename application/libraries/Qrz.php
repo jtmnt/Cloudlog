@@ -71,7 +71,7 @@ class Qrz {
 
             // Create XML object
             $xml = simplexml_load_string($xml);
-            if (empty($xml)) return;
+            if (!empty($xml->Session->Error)) return $data['error'] = $xml->Session->Error;
 
             // Return Required Fields
             $data['callsign'] = (string)$xml->Callsign->call;
@@ -91,6 +91,7 @@ class Qrz {
             $data['city'] = (string)$xml->Callsign->addr2;
             $data['lat'] = (string)$xml->Callsign->lat;
             $data['long'] = (string)$xml->Callsign->lon;
+            $data['dxcc'] = (string)$xml->Callsign->dxcc;
             $data['iota'] = (string)$xml->Callsign->iota;
             $data['qslmgr'] = (string)$xml->Callsign->qslmgr;
             $data['image'] = (string)$xml->Callsign->image;
